@@ -5,13 +5,14 @@ const { ECSClient, RunTaskCommand } = require('@aws-sdk/client-ecs');
 const { Server } = require('socket.io')
 const dotenv = require('dotenv')
 
+dotenv.config()
+
 const Redis = require('ioredis')
 const PORT = process.env.PORT || 9000
 const SOCKET_PORT = process.env.SOCKET_PORT || 9002
 const subscrier = new Redis(process.env.REDIS_URL)
 
 
-dotenv.config()
 const app = express()
 const io = new Server({ cors: '*' })
 
@@ -59,8 +60,8 @@ app.post('/project', async (req, res) => {
     networkConfiguration: {
       awsvpcConfiguration: {
         assignPublicIp: 'ENABLED',
-        subnets: ['subnet-0cf82589bbe6821ce', 'subnet-03cb819f36a6dc99e', 'subnet-0a1d550a3504bb225', 'subnet-0f0539e31ccf1b22f', 'subnet-000e27f3faf22910b', 'subnet-04bfebd7f8893360a'],
-        securityGroups: ['sg-05d47a07abcdde238'],
+        subnets: process.env.NETWORK_SUBNETS,
+        securityGroups: [process.env.SECURITY_GROUPS],
       }
     },
     overrides: {
